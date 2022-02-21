@@ -33,6 +33,48 @@
 	<center>
 		<h1>GeeksforGeeks</h1>
 		<h3>Public IP Address of user is:</h3>
+		
+		import static org.junit.Assert.*;
+import org.junit.Test;
+import java.math.BigInteger;
+import java.net.*;
+class IpRange {
+    IpRange(InetAddress from, InetAddress to) {
+        if(!from.getClass().equals(to.getClass())) throw new RuntimeException("different versions of ip address!");
+        this.from = new BigInteger(from.getAddress());
+        this.to = new BigInteger(to.getAddress());
+    }
+    boolean isInRange(InetAddress inetAddress) {
+        BigInteger bigInteger = new BigInteger(inetAddress.getAddress());
+        return !(from.compareTo(bigInteger) == 1 || bigInteger.compareTo(to) == 1);
+    }
+    final BigInteger from, to;
+}
+public class IpRangeTestCase {
+    @Test public void testInRange() throws UnknownHostException {
+        InetAddress from = InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 });
+        InetAddress x = InetAddress.getByAddress(new byte[] { 10, 10, 10, 42 });
+        InetAddress to = InetAddress.getByAddress(new byte[] { 10, 10, 10, (byte) 192 });
+        IpRange ipRange = new IpRange(from, to);
+        assertTrue(ipRange.isInRange(from));
+        assertTrue(ipRange.isInRange(x));
+        assertTrue(ipRange.isInRange(to));
+        InetAddress toSmall = InetAddress.getByAddress(new byte[] { 10, 10, 9, 1 });
+        assertFalse(ipRange.isInRange(toSmall));
+        InetAddress toBig = InetAddress.getByAddress(new byte[] { 10, 10, 10, (byte) 193 });
+        assertFalse(ipRange.isInRange(toBig));
+        InetAddress fromv6=InetAddress.getByAddress(new byte[] {(byte)0xfe,(byte)0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x02,(byte)0xb3,(byte)0xff,(byte)0xfe,0x1e,(byte)0x83,0x20});
+        InetAddress xv6=InetAddress.getByAddress(new byte[] {(byte)0xfe,(byte)0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x02,(byte)0xb3,(byte)0xff,(byte)0xfe,0x1e,(byte)0x83,0x29});
+        InetAddress tov6=InetAddress.getByAddress(new byte[] {(byte)0xfe,(byte)0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x02,(byte)0xb3,(byte)0xff,(byte)0xfe,0x1e,(byte)0x83,0x40});
+        IpRange ipRangev6 = new IpRange(fromv6, tov6);
+        assertTrue(ipRangev6.isInRange(xv6));
+    }
+    @Test (expected=RuntimeException.class) public void testInRangeThrows() throws UnknownHostException {
+        InetAddress v4 = InetAddress.getByAddress(new byte[] { 10, 10, 10, 1 });
+        InetAddress v6=InetAddress.getByAddress(new byte[] {(byte)0xfe,(byte)0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x02,(byte)0xb3,(byte)0xff,(byte)0xfe,0x1e,(byte)0x83,0x29});
+        new IpRange(v4, v6);
+    }
+}
 		<p id="gfg"></p>
 
 	</center>
